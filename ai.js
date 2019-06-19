@@ -3,10 +3,13 @@ console.log('ai.js loaded');
 
 (function(){
 
-const ai={
-    created_at:Date.now()
-}
+const ai={}
 
+ai.created_at=Date.now()
+
+ai.getIris = async function(){
+    return (await fetch('https://episphere.github.io/ai/data/iris.json')).json()
+}
 
 if(typeof(define)!=='undefined'){ // loaded as a required object
     define(ai)
