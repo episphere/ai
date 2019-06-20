@@ -64,6 +64,4 @@ if(typeof(define)!=='undefined'){ // loaded as a required object
     define(ai)
 }
 
-
-
 })()
