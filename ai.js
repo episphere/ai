@@ -43,6 +43,19 @@ ai.codeLab=async function(){ // https://codelabs.developers.google.com/codelabs/
       )
 }
 
+ai.plot=async function(div,traces,layout){
+    if(typeof(Plotly)=='undefined'){
+        await ai.getScript('https://cdn.plot.ly/plotly-latest.min.js')
+    }
+    div=div||document.createElement('div')
+    traces=traces||[{
+	x: [1, 2, 3, 4, 5],
+	y: [1, 2, 4, 8, 16]}]
+    layout=layout||{margin: { t: 0 } };
+
+	Plotly.plot(div,traces,layout)
+	return div
+}
 
 
 
@@ -56,7 +69,7 @@ if(typeof(window)=='object'){ // regular web browser application
         window.ai=ai
         // check if intro is in order
         console.log('window loaded')
-        ai.codeLab()
+        //ai.codeLab()
         //define(ai)
     }
 }
@@ -64,4 +77,21 @@ if(typeof(define)!=='undefined'){ // loaded as a required object
     define(ai)
 }
 
+})()
+
+
+
+// MIS
+
+(async function(){
+    cars = await ai.getCars()
+    trace={
+        x:[],
+        y:[]
+    }
+    cars.filter(c=>c.Miles_per_Gallon).forEach((c,i)=>{
+        trace.x[i]=c.Horsepower;
+        trace.y[i]=c.Miles_per_Gallon
+    })
+    
 })()
