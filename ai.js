@@ -48,9 +48,7 @@ ai.plot=async function(div,traces,layout){
         await ai.getScript('https://cdn.plot.ly/plotly-latest.min.js')
     }
     div=div||document.createElement('div')
-    traces=traces||[{
-	x: [1, 2, 3, 4, 5],
-	y: [1, 2, 4, 8, 16]}]
+    traces=traces||[{x: [1, 2, 3, 4, 5],y: [1, 2, 4, 8, 16]}]
     layout=layout||{margin: { t: 0 } };
 
 	Plotly.plot(div,traces,layout)
@@ -82,7 +80,7 @@ if(typeof(define)!=='undefined'){ // loaded as a required object
 
 
 // MIS
-
+/*
 (async function(){
     cars = await ai.getCars()
     trace={
@@ -95,3 +93,5 @@ if(typeof(define)!=='undefined'){ // loaded as a required object
     })
     
 })()
+
+*/
