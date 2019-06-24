@@ -25,7 +25,10 @@ ai.getScript=async function(url){
     })
 }
 
-ai.codeLab=async function(){ // https://codelabs.developers.google.com/codelabs/tfjs-training-regression
+ai.codeLabCars=async function(){ // https://codelabs.developers.google.com/codelabs/tfjs-training-regression
+    ai.codeLabCars.data=await (await fetch('https://storage.googleapis.com/tfjs-tutorials/carsData.json')).json()
+
+    /*
     let cars = await ai.getCars()
     let values = cars.map(c=>{return{
         //debugger
@@ -41,15 +44,17 @@ ai.codeLab=async function(){ // https://codelabs.developers.google.com/codelabs/
           height: 300
         }
       )
+     */
 }
 
-ai.codeLabIris=async function(){
-    console.log('iris lab assembling ...')
+ai.codeLabIris=async function(div){
+    ai.codeLabIris.div=div||document.getElementById('codeLabIrisDiv')||document.createElement('div')
+    ai.codeLabIris.div.innerHTML='<div id="codeLabIrisMsg">irisLab starting ...</div>'
     ai.codeLabIris.data=await (await fetch('https://episphere.github.io/ai/data/iris.json')).json()
     ai.codeLabIris.parms = Object.keys(ai.codeLabIris.data[0]).slice(0,-1)
     let n = ai.codeLabIris.parms.length
     ai.codeLabIris.table=document.createElement('table')
-    document.body.appendChild(ai.codeLabIris.table)
+    ai.codeLabIris.div.appendChild(ai.codeLabIris.table)
     // wrangle the data
     let sp={};ai.codeLabIris.data.forEach(d=>{
         if(!sp[d.species]){sp[d.species]=0}
@@ -61,15 +66,6 @@ ai.codeLabIris=async function(){
     ai.codeLabIris.species.forEach(s=>{
         ai.codeLabIris.speciesData[s]=ai.codeLabIris.data.filter(d=>(d.species==s))
     })
-
-
-
-     
-
-     
-
-    //debugger
-
 
     for(var i = 0; i<n ; i++){
         let tr = document.createElement('tr')
@@ -112,8 +108,11 @@ ai.codeLabIris=async function(){
             }
         }
     }
-    return ai.codeLabIris.table
-    //debugger
+    //return ai.codeLabIris.table
+    setTimeout(_=>{codeLabIrisMsg.innerHTML=''},3000)
+
+    
+    return ai.codeLabIris.div
 }
 
 ai.cleanIrisData
