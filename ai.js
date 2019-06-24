@@ -82,35 +82,36 @@ ai.codeLabIris=async function(){
             div.id=`${i}_${j}`
             //div.innerHTML=`div(${i},${j})`
             // preparind dt for ploting
-            let traces = []
-            ai.codeLabIris.species.forEach(s=>{
-                traces.push({
-                    x:ai.codeLabIris.speciesData[s].map(d=>d[ai.codeLabIris.parms[i]]),
-                    y:ai.codeLabIris.speciesData[s].map(d=>d[ai.codeLabIris.parms[j]]),
-                    type:'scatter',
-                    mode:'markers',
-                    name: s
+            if(j<i){
+                let traces = []
+                ai.codeLabIris.species.forEach(s=>{
+                    traces.push({
+                        x:ai.codeLabIris.speciesData[s].map(d=>d[ai.codeLabIris.parms[i]]),
+                        y:ai.codeLabIris.speciesData[s].map(d=>d[ai.codeLabIris.parms[j]]),
+                        type:'scatter',
+                        mode:'markers',
+                        name: s
+                    })
                 })
-            })
-            // debugger
-            // ai.plot(div)
-            // style="width:600px;height:250px;"
-            div.style.width=400
-            div.style.height=400
-            td.appendChild(div)
-            tr.appendChild(td)
-            layout={
-                xaxis: {
-                    title: ai.codeLabIris.parms[i]
-                },
-                yaxis: {
-                    title: ai.codeLabIris.parms[j]
+                // debugger
+                // ai.plot(div)
+                // style="width:600px;height:250px;"
+                div.style.width=400
+                div.style.height=400
+                td.appendChild(div)
+                tr.appendChild(td)
+                layout={
+                    xaxis: {
+                        title: ai.codeLabIris.parms[i]
+                    },
+                    yaxis: {
+                        title: ai.codeLabIris.parms[j]
+                    }
                 }
+                ai.plot(div,traces,layout)
             }
-            ai.plot(div,traces,layout)
         }
     }
-
     return ai.codeLabIris.table
     //debugger
 }
