@@ -46,7 +46,8 @@ ai.codeLab=async function(){ // https://codelabs.developers.google.com/codelabs/
 ai.codeLabIris=async function(){
     console.log('iris lab assembling ...')
     ai.codeLabIris.data=await (await fetch('https://episphere.github.io/ai/data/iris.json')).json()
-    let n = Object.entries(ai.codeLabIris.data[0]).length-1
+    ai.codeLabIris.parms = Object.keys(ai.codeLabIris.data[0]).slice(0,-1)
+    let n = ai.codeLabIris.parms.length
     ai.codeLabIris.table=document.createElement('table')
     document.body.appendChild(ai.codeLabIris.table)
     // wrangle the data
@@ -55,11 +56,17 @@ ai.codeLabIris=async function(){
         sp[d.species]+=1
     })
     // for each species generate a trace
-    Object.keys(sp).forEach(s=>{
-        //debugger
-     })
+    ai.codeLabIris.speciesData={}
+    ai.codeLabIris.species=Object.keys(sp)
+    ai.codeLabIris.species.forEach(s=>{
+        ai.codeLabIris.speciesData[s]=ai.codeLabIris.data.filter(d=>(d.species==s))
+    })
 
-     let species = Object.keys(sp)
+
+
+     
+
+     
 
     //debugger
 
@@ -73,9 +80,26 @@ ai.codeLabIris=async function(){
             div.i=i
             div.j=i
             div.id=`${i}_${j}`
-            div.innerHTML=`div(${i},${j})`
+            //div.innerHTML=`div(${i},${j})`
+            // preparind dt for ploting
+            let traces = []
+            ai.codeLabIris.species.forEach(s=>{
+                traces.push({
+                    x:ai.codeLabIris.speciesData[s].map(d=>d[ai.codeLabIris.parms[i]]),
+                    y:ai.codeLabIris.speciesData[s].map(d=>d[ai.codeLabIris.parms[j]]),
+                    type:'scatter',
+                    mode:'markers',
+                    name: s
+                })
+            })
+            // debugger
+            // ai.plot(div)
+            // style="width:600px;height:250px;"
+            div.style.width=600/2
+            div.style.height=250
             td.appendChild(div)
             tr.appendChild(td)
+            ai.plot(div,traces)
         }
     }
 
