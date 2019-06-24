@@ -43,6 +43,38 @@ ai.codeLab=async function(){ // https://codelabs.developers.google.com/codelabs/
       )
 }
 
+ai.codeLabIris=async function(){
+    console.log('iris lab loading ...')
+    ai.codeLabIris.data=await (await fetch('https://episphere.github.io/ai/data/iris.json')).json()
+    let n = Object.entries(ai.codeLabIris.data[0]).length-1
+    ai.codeLabIris.table=document.createElement('table')
+    document.body.appendChild(ai.codeLabIris.table)
+    // wrangle the data
+    let sp={};ai.codeLabIris.data.forEach(d=>{
+        if(!sp[d.species]){sp[d.species]=0}
+        sp[d.species]+=1
+    })
+    // for each species generate a trace
+    Object.keys(sp).forEach(s=>{debugger})
+
+    debugger
+
+
+    for(var i = 0; i<n ; i++){
+        let tr = document.createElement('tr')
+        ai.codeLabIris.table.appendChild(tr)
+        for(var j=0 ; j<n ; j++){
+            let td = document.createElement('td')
+            tr.appendChild(td)
+        }
+    }
+
+    return ai.codeLabIris.table
+    //debugger
+}
+
+ai.cleanIrisData
+
 ai.plot=async function(div,traces,layout){
     if(typeof(Plotly)=='undefined'){
         await ai.getScript('https://cdn.plot.ly/plotly-latest.min.js')
