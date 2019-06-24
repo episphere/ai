@@ -44,7 +44,7 @@ ai.codeLab=async function(){ // https://codelabs.developers.google.com/codelabs/
 }
 
 ai.codeLabIris=async function(){
-    console.log('iris lab loading ...')
+    console.log('iris lab assembling ...')
     ai.codeLabIris.data=await (await fetch('https://episphere.github.io/ai/data/iris.json')).json()
     let n = Object.entries(ai.codeLabIris.data[0]).length-1
     ai.codeLabIris.table=document.createElement('table')
@@ -55,9 +55,13 @@ ai.codeLabIris=async function(){
         sp[d.species]+=1
     })
     // for each species generate a trace
-    Object.keys(sp).forEach(s=>{debugger})
+    Object.keys(sp).forEach(s=>{
+        //debugger
+     })
 
-    debugger
+     let species = Object.keys(sp)
+
+    //debugger
 
 
     for(var i = 0; i<n ; i++){
@@ -65,6 +69,12 @@ ai.codeLabIris=async function(){
         ai.codeLabIris.table.appendChild(tr)
         for(var j=0 ; j<n ; j++){
             let td = document.createElement('td')
+            let div = document.createElement('div')
+            div.i=i
+            div.j=i
+            div.id=`${i}_${j}`
+            div.innerHTML=`div(${i},${j})`
+            td.appendChild(div)
             tr.appendChild(td)
         }
     }
