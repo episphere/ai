@@ -49,7 +49,7 @@ ai.codeLabCars=async function(){ // https://codelabs.developers.google.com/codel
 
 ai.codeLabIris=async function(div){
     ai.codeLabIris.div=div||document.getElementById('codeLabIrisDiv')||document.createElement('div')
-    ai.codeLabIris.div.innerHTML='<div id="codeLabIrisMsg">irisLab starting ...</div>'
+    ai.codeLabIris.div.innerHTML='<div id="codeLabIrisMsg"><p>iris data loading ...</p></div>'
     ai.codeLabIris.data=await (await fetch('https://episphere.github.io/ai/data/iris.json')).json()
     ai.codeLabIris.parms = Object.keys(ai.codeLabIris.data[0]).slice(0,-1)
     let n = ai.codeLabIris.parms.length
@@ -98,10 +98,10 @@ ai.codeLabIris=async function(div){
                 tr.appendChild(td)
                 layout={
                     xaxis: {
-                        title: ai.codeLabIris.parms[i]
+                        title: ai.codeLabIris.parms[j]
                     },
                     yaxis: {
-                        title: ai.codeLabIris.parms[j]
+                        title: ai.codeLabIris.parms[i]
                     }
                 }
                 ai.plot(div,traces,layout)
@@ -109,7 +109,7 @@ ai.codeLabIris=async function(div){
         }
     }
     //return ai.codeLabIris.table
-    setTimeout(_=>{codeLabIrisMsg.innerHTML=''},3000)
+    setTimeout(_=>{codeLabIrisMsg.innerHTML=''},2000)
 
     
     return ai.codeLabIris.div
