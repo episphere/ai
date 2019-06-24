@@ -95,11 +95,19 @@ ai.codeLabIris=async function(){
             // debugger
             // ai.plot(div)
             // style="width:600px;height:250px;"
-            div.style.width=600/2
-            div.style.height=250
+            div.style.width=400
+            div.style.height=400
             td.appendChild(div)
             tr.appendChild(td)
-            ai.plot(div,traces)
+            layout={
+                xaxis: {
+                    title: ai.codeLabIris.parms[i]
+                },
+                yaxis: {
+                    title: ai.codeLabIris.parms[j]
+                }
+            }
+            ai.plot(div,traces,layout)
         }
     }
 
