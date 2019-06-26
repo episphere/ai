@@ -25,27 +25,135 @@ ai.getScript=async function(url){
     })
 }
 
-ai.codeLabCars=async function(){ // https://codelabs.developers.google.com/codelabs/tfjs-training-regression
+ai.codeLabCars=async function(div){ // https://codelabs.developers.google.com/codelabs/tfjs-training-regression
+    // Plotly so we have a persistent UI
+    ai.codeLabIris.div=div||document.getElementById('codeLabCarsDiv')||document.createElement('div')
+    ai.codeLabIris.div.innerHTML='<p>Loading data ...</p>'
     ai.codeLabCars.data=await (await fetch('https://storage.googleapis.com/tfjs-tutorials/carsData.json')).json()
+    ai.codeLabIris.div.innerHTML='<div id="codeLabCarsDataPlot" style="width:500;height:500"></div>'
+    ai.codeLabIris.divDataPlot=ai.codeLabIris.div.querySelector('#codeLabCarsDataPlot')
+    // ploting MPG vs horsepower uing tfvis
+    let trace = {
+        x:ai.codeLabCars.data.map(d=>d.Horsepower),
+        y:ai.codeLabCars.data.map(d=>d.Miles_per_Gallon),
+        type:'scatter',
+        mode:'markers',
+    }
+    let layout={
+        title:'MPG vs HorsePower',
+        xaxis: {
+            title: 'Horsepower'
+        },
+        yaxis: {
+            title: 'Miles_per_Gallon'
+        }
+    }
+    ai.plot(ai.codeLabIris.divDataPlot,[trace],layout)
 
-    /*
-    let cars = await ai.getCars()
-    let values = cars.map(c=>{return{
+    // plot it also with tfVis
+    let values = ai.codeLabCars.data.map(c=>{return{
         //debugger
         x:c.Horsepower,
         y:c.Miles_per_Gallon
     }})
     tfvis.render.scatterplot(
-        {name: 'Horsepower v MPG'},
-        {values}, 
+        {name:'MPG vs HorsePower'},
+        {values},
         {
-          xLabel: 'Horsepower',
-          yLabel: 'MPG',
-          height: 300
+            xLabel: 'Horsepower',
+            yLabel: 'MPG',
+            height: 300
         }
-      )
-     */
+    )
+    // Model architecture
+    // https://codelabs.developers.google.com/codelabs/tfjs-training-regression/#3
+    const model = ai.codeLabCars.createModel();
+    tfvis.show.modelSummary({name: 'Model Summary'}, model);
+    // https://codelabs.developers.google.com/codelabs/tfjs-training-regression/#5
+    // Convert the data to a form we can use for training.
+    const tensorData = ai.codeLabCars.convertToTensor(ai.codeLabCars.data)
+    const {inputs, labels} = tensorData;
+    // Train the model  
+    await ai.codeLabCars.trainModel(model, inputs, labels);
+    console.log('Done Training');
+
+    return ai.codeLabIris.div // in case this is a module being required in another env, such as an observable notebook
 }
+
+ai.codeLabCars.createModel=function() {
+    // https://codelabs.developers.google.com/codelabs/tfjs-training-regression/#3
+    // Create a sequential model
+    const model = tf.sequential(); 
+
+    // Add a single hidden layer
+    model.add(tf.layers.dense({inputShape: [1], units: 1, useBias: true}));
+
+    // Add an output layer
+    model.add(tf.layers.dense({units: 1, useBias: true}));
+
+    return model;
+}
+
+ai.codeLabCars.convertToTensor=function(data) {
+  // Wrapping these calculations in a tidy will dispose any 
+  // intermediate tensors.
+  
+  return tf.tidy(() => { // clean memory use https://js.tensorflow.org/api/0.11.7/#tidy
+    // Step 1. Shuffle the data    
+    tf.util.shuffle(data);
+
+    // Step 2. Convert data to Tensor
+    const inputs = data.map(d => d.horsepower)
+    const labels = data.map(d => d.mpg);
+
+    const inputTensor = tf.tensor2d(inputs, [inputs.length, 1]);
+    const labelTensor = tf.tensor2d(labels, [labels.length, 1]);
+
+    //Step 3. Normalize the data to the range 0 - 1 using min-max scaling
+    const inputMax = inputTensor.max();
+    const inputMin = inputTensor.min();  
+    const labelMax = labelTensor.max();
+    const labelMin = labelTensor.min();
+
+    const normalizedInputs = inputTensor.sub(inputMin).div(inputMax.sub(inputMin));
+    const normalizedLabels = labelTensor.sub(labelMin).div(labelMax.sub(labelMin));
+
+    return {
+      inputs: normalizedInputs,
+      labels: normalizedLabels,
+      // Return the min/max bounds so we can use them later.
+      inputMax,
+      inputMin,
+      labelMax,
+      labelMin,
+    }
+  });  
+}
+
+ai.codeLabCars.trainModel = async function (model, inputs, labels) {
+  // Prepare the model for training.  
+  model.compile({
+    optimizer: tf.train.adam(),
+    loss: tf.losses.meanSquaredError,
+    //metrics: ['mse'], // <-- needed?
+  });
+  
+  const batchSize = 32; // <-- discuss how this could lead to a federated learning implementation
+  const epochs = 50;
+  
+  return await model.fit(inputs, labels, {
+    batchSize,
+    epochs,
+    shuffle: true,
+    callbacks: tfvis.show.fitCallbacks(
+      { name: 'Training Performance' },
+      //['loss', 'mse'],
+      ['loss'], 
+      { height: 200, callbacks: ['onEpochEnd'] }
+    )
+  });
+}
+
 
 ai.codeLabIris=async function(div){
     ai.codeLabIris.div=div||document.getElementById('codeLabIrisDiv')||document.createElement('div')
@@ -141,6 +249,12 @@ if(typeof(window)=='object'){ // regular web browser application
         window.ai=ai
         // check if intro is in order
         console.log('window loaded')
+        try{
+            document.getElementById('codeLabCars').disabled=false
+            document.getElementById('codeLabCars').click() // run https://codelabs.developers.google.com/codelabs/tfjs-training-regression if available
+        }catch (err){
+
+        }
         //ai.codeLab()
         //define(ai)
     }
