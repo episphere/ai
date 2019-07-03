@@ -145,12 +145,24 @@ ai.codeLabCars.trainModel = async function (model, inputs, labels) {
     batchSize,
     epochs,
     shuffle: true,
+    callbacks:{
+      onEpochEnd: async (epoch,logs) => {
+        console.log("Epoch: "+epoch+" Loss: "+logs.loss)
+        await tf.nextFrame()
+      }
+    }
+      
+    /*
     callbacks: tfvis.show.fitCallbacks(
       { name: 'Training Performance' },
-      //['loss', 'mse'],
-      ['loss'], 
-      { height: 200, callbacks: ['onEpochEnd'] }
+      ['loss', 'mse'],
+      //['loss'], 
+      { 
+        height: 200,
+        callbacks: ['onEpochEnd']
+      }
     )
+    */
   });
 }
 
